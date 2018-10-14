@@ -3,10 +3,10 @@ package com.example.tfuwape.flickrfindr.activities;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.example.tfuwape.flickrfindr.core.APIService;
-import com.example.tfuwape.flickrfindr.core.ApiCallback;
 import com.example.tfuwape.flickrfindr.core.MyApplication;
 import com.example.tfuwape.flickrfindr.util.MyUtil;
 import com.example.tfuwape.flickrfindr.util.TypefaceManager;
@@ -17,8 +17,7 @@ import javax.inject.Inject;
 /**
  * Base activity that contains common components and injection logic
  */
-public abstract class InjectableBaseActivity extends Activity
-        implements ApiCallback.OnUnauthorizedErrorListener {
+public abstract class InjectableBaseActivity extends AppCompatActivity {
 
     protected TypefaceManager mTypefaceManager;
     protected APIService mAPI;

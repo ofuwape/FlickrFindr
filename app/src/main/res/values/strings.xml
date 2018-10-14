@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Flickr Findr</string>
+    <string name="search_icon">Search Icon</string>
+    <string name="search_int">What\'s on your mind?</string>
 </resources>

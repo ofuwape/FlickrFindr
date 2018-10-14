@@ -1,4 +1,4 @@
-package com.curiosity.adapters;
+package com.example.tfuwape.flickrfindr.adapter;
 
 /**
  * Created by
@@ -8,16 +8,14 @@ package com.curiosity.adapters;
 import android.content.Context;
 import android.database.AbstractCursor;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SimpleCursorAdapter;
 
-import com.curiosity.R;
-import com.curiosity.activities.MainActivity;
-import com.curiosity.core.APIService;
-import com.curiosity.models.containers.suggestion_models.SuggestionContainer;
-import com.curiosity.util.CuriosityUtil;
+import com.example.tfuwape.flickrfindr.R;
+import com.example.tfuwape.flickrfindr.activities.MainActivity;
+import com.example.tfuwape.flickrfindr.core.APIService;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,7 +25,7 @@ public class SuggestionSimpleCursorAdapter extends SimpleCursorAdapter {
     private static final String[] mFields = {"_id", "result"};
     private static final String[] mVisible = {"result"};
     private static final int[] mViewIds = {android.R.id.text1};
-    private ArrayList<String> mResults;
+    private ArrayList<String> mResults=new ArrayList<>();
     private static final String UN_IMPLEMENTED_TEXT = "unimplemented";
 
     private Context activityContext;
@@ -35,52 +33,33 @@ public class SuggestionSimpleCursorAdapter extends SimpleCursorAdapter {
     public SuggestionSimpleCursorAdapter(Context context) {
         super(context, R.layout.sugestions_list, null, mVisible, mViewIds, 0);
         activityContext = context;
-
     }
 
-    private void retrieveSuggestions(final String text, final int fuzzinessNum) {
+    private void retrieveSuggestions(final String text) {
         if (activityContext instanceof MainActivity) {
-            APIService mAPI = ((MainActivity) activityContext).getAPIForSuggest();
-
-            HashMap<String, Integer> fuzziness = new HashMap<>();
-            fuzziness.put("fuzziness", fuzzinessNum);
-
-            HashMap<String, Object> completion = new HashMap<>();
-            completion.put("field", "suggest");
-            completion.put("fuzzy", fuzziness);
-
-            HashMap<String, Object> media = new HashMap<>();
-            media.put("text", CuriosityUtil.formatSearchText(text));
-            media.put("completion", completion);
-
-            HashMap<String, Object> suggestParam = new HashMap<>();
-            suggestParam.put("media", media);
-
-            mAPI.getSuggestions(suggestParam).enqueue(new Callback<SuggestionContainer>() {
-                @Override
-                public void onResponse(final Call<SuggestionContainer> call, final Response<SuggestionContainer> response) {
-                    handleSuggestionResponse(response, text, fuzzinessNum);
-                }
-
-                @Override
-                public void onFailure(final Call<SuggestionContainer> call, final Throwable t) {
-                    clearResult();
-                }
-            });
+//            APIService mAPI = ((MainActivity) activityContext).getAPIForSuggest();
+//            mAPI.getSuggestions(suggestParam).enqueue(new Callback<Object>() {
+//                @Override
+//                public void onResponse(@NonNull final Call<Object> call,
+//                                       @NonNull final Response<Object> response) {
+//                    handleSuggestionResponse(response, text);
+//                }
+//
+//                @Override
+//                public void onFailure(@NonNull final Call<Object> call,
+//                                      @NonNull final Throwable t) {
+//                    clearResult();
+//                }
+//            });
         }
     }
 
-    private void handleSuggestionResponse(final Response<SuggestionContainer> response,
-                                          final String text, final int fuzzinessNum) {
-        final SuggestionContainer suggestionContainer = response.body();
+    private void handleSuggestionResponse(final Response<Object> response, final String text) {
+        final Object suggestionContainer = response.body();
         if (response.isSuccessful() && suggestionContainer != null) {
-            suggestionContainer.setContext(activityContext);
-            mResults = suggestionContainer.getMediaTitles();
+//            mResults = suggestionContainer.getMediaTitles();
             if (mResults.isEmpty()) {
                 clearResult();
-                if (fuzzinessNum == 0) {
-                    retrieveSuggestions(text, fuzzinessNum + 2);
-                }
             } else {
                 notifyDataSetChanged();
             }
@@ -108,8 +87,8 @@ public class SuggestionSimpleCursorAdapter extends SimpleCursorAdapter {
 
         SuggestionsCursor(CharSequence constraint) {
             final String input = constraint == null ? "" : constraint.toString();
-            if (!input.isEmpty() && input.length() >= 1) {
-                retrieveSuggestions(input, 0);
+            if (!input.isEmpty()) {
+                retrieveSuggestions(input);
             } else {
                 clearResult();
             }
