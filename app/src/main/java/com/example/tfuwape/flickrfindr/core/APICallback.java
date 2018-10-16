@@ -4,10 +4,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public abstract class ApiCallback<T> implements Callback<T> {
-    private ApiCallback.OnUnauthorizedErrorListener mListener;
+public abstract class APICallback<T> implements Callback<T> {
+    private APICallback.OnUnauthorizedErrorListener mListener;
 
-    public ApiCallback(OnUnauthorizedErrorListener mListener) {
+    public APICallback(OnUnauthorizedErrorListener mListener) {
         this.mListener = mListener;
     }
 

@@ -1,5 +1,7 @@
 package com.example.tfuwape.flickrfindr.core;
 
+import com.example.tfuwape.flickrfindr.models.containers.PhotoSearchContainer;
+
 import java.util.Map;
 
 import retrofit2.Call;
@@ -11,7 +13,7 @@ import retrofit2.http.QueryMap;
  */
 public interface APIService {
 
-    @POST("v1/login/")
-    Call<Object> search(@QueryMap Map<String, String> params);
+    @POST("?method=flickr.photos.search")
+    Call<PhotoSearchContainer> searchTerm(final @QueryMap Map<String, String> params);
 
 }

@@ -1,8 +1,8 @@
 package com.example.tfuwape.flickrfindr.adapter;
 
-/**
- * Created by
- * Oluwatoni Fuwape on 11/12/15.
+/*
+  Created by
+  Oluwatoni Fuwape
  */
 
 import android.content.Context;
@@ -13,52 +13,62 @@ import android.support.v4.widget.SimpleCursorAdapter;
 
 import com.example.tfuwape.flickrfindr.R;
 import com.example.tfuwape.flickrfindr.activities.MainActivity;
+import com.example.tfuwape.flickrfindr.builders.SearchParamsBuilder;
 import com.example.tfuwape.flickrfindr.core.APIService;
+import com.example.tfuwape.flickrfindr.models.PhotoItem;
+import com.example.tfuwape.flickrfindr.models.containers.PhotoSearchContainer;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SuggestionSimpleCursorAdapter extends SimpleCursorAdapter {
+public class PhotoSearchAdapter extends SimpleCursorAdapter {
     private static final String[] mFields = {"_id", "result"};
     private static final String[] mVisible = {"result"};
     private static final int[] mViewIds = {android.R.id.text1};
-    private ArrayList<String> mResults=new ArrayList<>();
+    private ArrayList<PhotoItem> mPhotoItems = new ArrayList<>();
     private static final String UN_IMPLEMENTED_TEXT = "unimplemented";
 
     private Context activityContext;
+    private APIService apiService;
 
-    public SuggestionSimpleCursorAdapter(Context context) {
+    public PhotoSearchAdapter(Context context, APIService mAPIService) {
         super(context, R.layout.sugestions_list, null, mVisible, mViewIds, 0);
         activityContext = context;
+        this.apiService = mAPIService;
     }
 
     private void retrieveSuggestions(final String text) {
-        if (activityContext instanceof MainActivity) {
-//            APIService mAPI = ((MainActivity) activityContext).getAPIForSuggest();
-//            mAPI.getSuggestions(suggestParam).enqueue(new Callback<Object>() {
-//                @Override
-//                public void onResponse(@NonNull final Call<Object> call,
-//                                       @NonNull final Response<Object> response) {
-//                    handleSuggestionResponse(response, text);
-//                }
-//
-//                @Override
-//                public void onFailure(@NonNull final Call<Object> call,
-//                                      @NonNull final Throwable t) {
-//                    clearResult();
-//                }
-//            });
+        if (activityContext instanceof MainActivity && apiService != null) {
+
+            final String apiKey = activityContext.getResources().getString(R.string.api_key);
+            final Map<String, String> searchParams = new SearchParamsBuilder().
+                    addSearchTerm(text).addAPIKey(apiKey).toParams();
+
+            apiService.searchTerm(searchParams).enqueue(new Callback<PhotoSearchContainer>() {
+                @Override
+                public void onResponse(@NonNull final Call<PhotoSearchContainer> call,
+                                       @NonNull final Response<PhotoSearchContainer> response) {
+                    handleSuggestionResponse(response, text);
+                }
+
+                @Override
+                public void onFailure(@NonNull final Call<PhotoSearchContainer> call,
+                                      @NonNull final Throwable t) {
+                    clearResult();
+                }
+            });
         }
     }
 
-    private void handleSuggestionResponse(final Response<Object> response, final String text) {
-        final Object suggestionContainer = response.body();
-        if (response.isSuccessful() && suggestionContainer != null) {
-//            mResults = suggestionContainer.getMediaTitles();
-            if (mResults.isEmpty()) {
+    private void handleSuggestionResponse(final Response<PhotoSearchContainer> response, final String text) {
+        final PhotoSearchContainer container = response.body();
+        if (response.isSuccessful() && container != null && container.getPhotos() != null) {
+            mPhotoItems = container.getPhotos().getPhotoItems();
+            if (mPhotoItems == null || mPhotoItems.isEmpty()) {
                 clearResult();
             } else {
                 notifyDataSetChanged();
@@ -69,7 +79,7 @@ public class SuggestionSimpleCursorAdapter extends SimpleCursorAdapter {
     }
 
     public String getTextAtPosition(final int position) {
-        return mResults.get(position);
+        return mPhotoItems.get(position).getTitle();
     }
 
     @Override
@@ -78,7 +88,7 @@ public class SuggestionSimpleCursorAdapter extends SimpleCursorAdapter {
     }
 
     private void clearResult() {
-        mResults = new ArrayList<>();
+        mPhotoItems = new ArrayList<>();
         notifyDataSetChanged();
     }
 
@@ -93,14 +103,14 @@ public class SuggestionSimpleCursorAdapter extends SimpleCursorAdapter {
                 clearResult();
             }
 
-            if (mResults == null) {
+            if (mPhotoItems == null) {
                 clearResult();
             }
         }
 
         @Override
         public int getCount() {
-            return mResults.size();
+            return mPhotoItems.size();
         }
 
         @Override
@@ -119,7 +129,7 @@ public class SuggestionSimpleCursorAdapter extends SimpleCursorAdapter {
         @Override
         public String getString(int column) {
             if (column == 1) {
-                return mResults.get(getPosition());
+                return mPhotoItems.get(getPosition()).getTitle();
             }
             throw new UnsupportedOperationException(UN_IMPLEMENTED_TEXT);
         }

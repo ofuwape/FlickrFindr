@@ -8,14 +8,18 @@ import android.support.v7.widget.SearchView
 import android.view.Menu
 import butterknife.ButterKnife
 import com.example.tfuwape.flickrfindr.R
-import com.example.tfuwape.flickrfindr.adapter.SuggestionSimpleCursorAdapter
+import com.example.tfuwape.flickrfindr.adapter.PhotoSearchAdapter
 
 class MainActivity : InjectableBaseActivity() {
+
+
+    private lateinit var photoSearchAdapter:PhotoSearchAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
         ButterKnife.bind(this)
+        photoSearchAdapter = PhotoSearchAdapter(this, api)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -37,10 +41,8 @@ class MainActivity : InjectableBaseActivity() {
                         SearchActivity::class.java)))
                 handleTitleView(searchView)
 
-                val suggestionSimpleCursorAdapter = SuggestionSimpleCursorAdapter(this)
-                searchView.suggestionsAdapter = suggestionSimpleCursorAdapter
-
-                addSearchViewListener(searchManager,searchView,suggestionSimpleCursorAdapter)
+                searchView.suggestionsAdapter = photoSearchAdapter
+                addSearchViewListener(searchManager,searchView,photoSearchAdapter)
 
             }
         }
@@ -48,11 +50,11 @@ class MainActivity : InjectableBaseActivity() {
     }
 
     private fun addSearchViewListener(searchManager: SearchManager, searchView: SearchView,
-                                      suggestionSimpleCursorAdapter: SuggestionSimpleCursorAdapter) {
+                                      suggestionAdapterPhoto: PhotoSearchAdapter) {
         val activity = this
         searchView.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
             override fun onSuggestionClick(position: Int): Boolean {
-                val query = suggestionSimpleCursorAdapter.getTextAtPosition(position)
+                val query = suggestionAdapterPhoto.getTextAtPosition(position)
                 searchView.setSearchableInfo(searchManager
                         .getSearchableInfo(ComponentName(activity, SearchActivity::class.java)))
                 searchView.setQuery(query, true)

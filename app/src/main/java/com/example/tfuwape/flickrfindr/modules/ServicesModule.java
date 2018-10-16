@@ -1,6 +1,8 @@
 package com.example.tfuwape.flickrfindr.modules;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.example.tfuwape.flickrfindr.BuildConfig;
 import com.example.tfuwape.flickrfindr.core.APIService;
@@ -54,7 +56,7 @@ public final class ServicesModule extends MockableModule {
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new Interceptor() {
                     @Override
-                    public Response intercept(Interceptor.Chain chain) throws IOException {
+                    public Response intercept(@NonNull Interceptor.Chain chain) throws IOException {
 
                         Request original = chain.request();
                         Request.Builder requestBuilder = original.newBuilder()
@@ -62,12 +64,18 @@ public final class ServicesModule extends MockableModule {
                                 .header("User-Agent", "Flickr Findr")
                                 .method(original.method(), original.body());
 
+                        if (BuildConfig.DEBUG) {
+                            Request request = requestBuilder.build();
+                            Log.i("apiUrl-->", request.url().toString());
+                        }
+
                         return chain.proceed(requestBuilder.build());
                     }
                 }).build();
 
         String baseUrl = apiPath;
 
+        // Used for configuring mocked url endpoint
         if (BuildConfig.DEBUG && mockMode) {
             MyApplication app = MyUtil.getApplication(mContext);
             if (app != null && !app.getMockBaseUrl().isEmpty()) {

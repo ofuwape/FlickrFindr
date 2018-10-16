@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="api_path" translatable="false">https://api.flickr.com/</string>
-
+    <string name="api_path" translatable="false">https://api.flickr.com/services/rest/</string>
+    <string name="api_key">04a42d236e746206fbbf64245342dd2d</string>
 </resources>
