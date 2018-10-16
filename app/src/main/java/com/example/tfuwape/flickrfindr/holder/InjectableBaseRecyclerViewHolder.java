@@ -1,20 +1,11 @@
 package com.example.tfuwape.flickrfindr.holder;
 
 import android.content.Context;
-import android.content.res.AssetManager;
-import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.example.tfuwape.flickrfindr.core.MyApplication;
-import com.example.tfuwape.flickrfindr.util.DurationTimeFormatter;
 import com.example.tfuwape.flickrfindr.util.MyUtil;
-import com.example.tfuwape.flickrfindr.util.TypefaceManager;
-import com.example.tfuwape.flickrfindr.util.TypefaceType;
-
-import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 
@@ -24,20 +15,10 @@ import butterknife.ButterKnife;
 public abstract class InjectableBaseRecyclerViewHolder extends RecyclerView.ViewHolder
         implements View.OnClickListener, View.OnLongClickListener {
 
-    protected DurationTimeFormatter mDurationTimeFormatter;
-    protected TypefaceManager mTypefaceManager;
-
-    private final AssetManager mAssetManager;
     private final OnClickListener mListener;
     protected Context mContext;
     private View view;
 
-    @Inject
-    public void setConstructorParams(DurationTimeFormatter mDurationTimeFormatter,
-                                     TypefaceManager mTypefaceManager) {
-        this.mDurationTimeFormatter = mDurationTimeFormatter;
-        this.mTypefaceManager = mTypefaceManager;
-    }
 
     public InjectableBaseRecyclerViewHolder(Context context, View itemView) {
         this(context, itemView, null);
@@ -59,47 +40,6 @@ public abstract class InjectableBaseRecyclerViewHolder extends RecyclerView.View
             app.graph().inject(this);
         }
 
-        mAssetManager = context.getAssets();
-        applyTypefaces();
-    }
-
-    /**
-     * Override this method with view holder specific font bindings
-     */
-    protected abstract void applyTypefaces();
-
-    /**
-     * Set the typeface for the given TextView
-     *
-     * @param type Typeface type
-     * @param tv   TextView object
-     */
-    protected void setTypefaceForTextView(TypefaceType type, TextView tv) {
-        Typeface typeface;
-        typeface = typefaceFromType(type);
-        tv.setTypeface(typeface);
-    }
-
-    /**
-     * Set the typeface for the given Button's title
-     *
-     * @param type       Typeface type
-     * @param buttonView ButtonView object
-     */
-    protected void setTypefaceForButton(TypefaceType type, Button buttonView) {
-        Typeface typeface;
-        typeface = typefaceFromType(type);
-        buttonView.setTypeface(typeface);
-    }
-
-    /**
-     * Helper method to get typeface object from given type enum
-     *
-     * @param type TypfaceType enum
-     * @return Android Typeface object
-     */
-    private Typeface typefaceFromType(TypefaceType type) {
-        return mTypefaceManager.compiledTypefaceWithType(mAssetManager, type);
     }
 
     /**

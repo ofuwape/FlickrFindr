@@ -13,6 +13,9 @@ public class PhotoItem {
     @SerializedName("url_sq")
     private String squareUrl;
 
+    @SerializedName("url_l")
+    private String largeUrl;
+
 
     public String getTitle() {
         return title;
@@ -36,5 +39,13 @@ public class PhotoItem {
 
     public void setSquareUrl(String squareUrl) {
         this.squareUrl = squareUrl;
+    }
+
+    public String getLargeUrl() {
+        return largeUrl;
+    }
+
+    public void setLargeUrl(String largeUrl) {
+        this.largeUrl = largeUrl;
     }
 }
