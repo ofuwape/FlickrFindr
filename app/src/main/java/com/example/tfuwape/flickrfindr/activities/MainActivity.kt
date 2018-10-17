@@ -13,6 +13,7 @@ import com.example.tfuwape.flickrfindr.R
 import com.example.tfuwape.flickrfindr.adapters.PhotoSearchAdapter
 import com.example.tfuwape.flickrfindr.builders.SearchParamsBuilder
 import com.example.tfuwape.flickrfindr.core.APIService
+import com.example.tfuwape.flickrfindr.fragments.DetailDialogFragment
 import com.example.tfuwape.flickrfindr.holder.InjectableBaseRecyclerViewHolder
 import com.example.tfuwape.flickrfindr.listeners.PagingScrollListener
 import com.example.tfuwape.flickrfindr.models.PhotoItem
@@ -127,7 +128,22 @@ class MainActivity : InjectableBaseActivity(), InjectableBaseRecyclerViewHolder.
 
     // Search Item Click Listeners
     override fun onClick(position: Int) {
+        val selectedItem: PhotoItem? = photoSearchAdapter.getPhotoItem(position)
+        if (selectedItem != null) {
 
+            val detailDialogFragment: DetailDialogFragment = DetailDialogFragment.newInstance()
+            val bundle = Bundle()
+            bundle.putSerializable(DetailDialogFragment.PHOTO_ITEM_KEY, selectedItem)
+            detailDialogFragment.arguments = bundle
+
+            val transaction = supportFragmentManager.beginTransaction()
+            val prevFragment = supportFragmentManager.findFragmentByTag("detail_dialog")
+            if (prevFragment != null) {
+                transaction.remove(prevFragment)
+            }
+            transaction.addToBackStack(null)
+            detailDialogFragment.show(transaction, "detail_dialog")
+        }
     }
 
     //Pagination Listener

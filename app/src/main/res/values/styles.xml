@@ -7,18 +7,12 @@
         <item name="colorPrimaryDark">@android:color/background_dark</item>
         <item name="colorAccent">@android:color/white</item>
         <item name="autoCompleteTextViewStyle">@style/cursorColor</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 
     <style name="toolbar_title">
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@android:color/white</item>
-    </style>
-
-    <style name="Theme.MainTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@android:color/background_dark</item>
-        <item name="colorPrimaryDark">@android:color/background_dark</item>
-        <item name="colorAccent">@android:color/white</item>
-        <item name="android:windowBackground">@android:color/background_dark</item>
     </style>
 
     <style name="cursorColor" parent="Widget.AppCompat.AutoCompleteTextView">

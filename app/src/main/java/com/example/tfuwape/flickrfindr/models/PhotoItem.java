@@ -2,7 +2,9 @@ package com.example.tfuwape.flickrfindr.models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class PhotoItem {
+import java.io.Serializable;
+
+public class PhotoItem implements Serializable {
 
     @SerializedName("title")
     private String title;

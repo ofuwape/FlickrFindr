@@ -68,4 +68,13 @@ public class PhotoSearchAdapter extends InjectableBaseAdapter {
     }
 
 
+    public PhotoItem getPhotoItem(int position) {
+        if (mPhotoItems.size() > position) {
+            return mPhotoItems.get(position);
+        } else {
+            return null;
+        }
+    }
+
+
 }
