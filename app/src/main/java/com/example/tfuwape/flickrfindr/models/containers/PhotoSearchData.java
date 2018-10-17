@@ -34,7 +34,7 @@ public class PhotoSearchData {
 
     public Paginator getPaginator() {
         if (paginator == null) {
-            paginator = new Paginator(page, pages, perPage);
+            paginator = new Paginator(pages, page, perPage);
         }
         return paginator;
     }

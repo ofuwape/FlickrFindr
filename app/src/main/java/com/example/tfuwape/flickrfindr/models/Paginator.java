@@ -2,44 +2,32 @@ package com.example.tfuwape.flickrfindr.models;
 
 public class Paginator {
 
-    //current page
-    private int page;
+    //current currentPage
+    private int currentPage;
 
-    //total number of pages
-    private int pages;
+    //total number of totalPages
+    private int totalPages;
 
-    private int perPage;
+    private int limit;
 
     public Paginator() {
     }
 
-    public Paginator(int mPage, int mPages, int mPerPage) {
-        this.page = mPage;
-        this.pages = mPages;
-        this.perPage = mPerPage;
+    public Paginator(int mTotalPages, int mCurrentPage, int mLimit) {
+        this.currentPage = mCurrentPage;
+        this.totalPages = mTotalPages;
+        this.limit = mLimit;
     }
 
-    public int getPage() {
-        return page;
+    public int getLimit() {
+        return limit;
     }
 
-    public void setPage(int page) {
-        this.page = page;
+    public int getCurrentPage() {
+        return currentPage;
     }
 
-    public int getPages() {
-        return pages;
-    }
-
-    public void setPages(int pages) {
-        this.pages = pages;
-    }
-
-    public int getPerPage() {
-        return perPage;
-    }
-
-    public void setPerPage(int perPage) {
-        this.perPage = perPage;
+    public int getTotalPages() {
+        return totalPages;
     }
 }

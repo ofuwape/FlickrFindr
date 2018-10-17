@@ -6,6 +6,7 @@
         <item name="colorPrimary">@android:color/background_dark</item>
         <item name="colorPrimaryDark">@android:color/background_dark</item>
         <item name="colorAccent">@android:color/white</item>
+        <item name="autoCompleteTextViewStyle">@style/cursorColor</item>
     </style>
 
     <style name="toolbar_title">
@@ -18,6 +19,10 @@
         <item name="colorPrimaryDark">@android:color/background_dark</item>
         <item name="colorAccent">@android:color/white</item>
         <item name="android:windowBackground">@android:color/background_dark</item>
+    </style>
+
+    <style name="cursorColor" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textCursorDrawable">@drawable/cursor</item>
     </style>
 
 </resources>

@@ -10,10 +10,11 @@ import android.widget.Toast
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.example.tfuwape.flickrfindr.R
-import com.example.tfuwape.flickrfindr.adapter.PhotoSearchAdapter
+import com.example.tfuwape.flickrfindr.adapters.PhotoSearchAdapter
 import com.example.tfuwape.flickrfindr.builders.SearchParamsBuilder
 import com.example.tfuwape.flickrfindr.core.APIService
 import com.example.tfuwape.flickrfindr.holder.InjectableBaseRecyclerViewHolder
+import com.example.tfuwape.flickrfindr.listeners.PagingScrollListener
 import com.example.tfuwape.flickrfindr.models.PhotoItem
 import com.example.tfuwape.flickrfindr.models.containers.PhotoSearchContainer
 import com.example.tfuwape.flickrfindr.util.LineItemDecoration
@@ -21,7 +22,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainActivity : InjectableBaseActivity(), InjectableBaseRecyclerViewHolder.OnClickListener {
+class MainActivity : InjectableBaseActivity(), InjectableBaseRecyclerViewHolder.OnClickListener, PagingScrollListener.OnPageStateListener {
 
     @BindView(R.id.searchView)
     lateinit var searchView: SearchView
@@ -30,6 +31,9 @@ class MainActivity : InjectableBaseActivity(), InjectableBaseRecyclerViewHolder.
     lateinit var searchRecyclerView: RecyclerView
 
     private lateinit var photoSearchAdapter: PhotoSearchAdapter
+    private var mScrollListener: PagingScrollListener = PagingScrollListener()
+
+    private var currentQuery: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,19 +48,26 @@ class MainActivity : InjectableBaseActivity(), InjectableBaseRecyclerViewHolder.
         searchRecyclerView.addItemDecoration(LineItemDecoration(ContextCompat.getDrawable(this, android.R.color.darker_gray)))
         searchRecyclerView.adapter = photoSearchAdapter
         addSearchViewListener()
+
+        mScrollListener.setOnChangeStateListener(this)
+        searchRecyclerView.addOnScrollListener(mScrollListener)
+
         supportActionBar?.let { mSupportActionBar: ActionBar ->
             val actionBarTitle: String = mSupportActionBar.title.toString() + " - explore for photos..."
             mSupportActionBar.title = actionBarTitle
         }
-    }
 
+    }
 
     private fun addSearchViewListener() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
                 val cleanQuery = newText.trim()
                 if (!cleanQuery.isEmpty()) {
-                    retrievePhotoItems(cleanQuery)
+                    currentQuery = cleanQuery
+                    retrievePhotoItems(cleanQuery, 1)
+                } else {
+                    photoSearchAdapter.resetPhotoItems()
                 }
                 return true
             }
@@ -74,20 +85,19 @@ class MainActivity : InjectableBaseActivity(), InjectableBaseRecyclerViewHolder.
     /**
      * Fires api search for photos based on query.
      */
-    private fun retrievePhotoItems(text: String) {
+    private fun retrievePhotoItems(text: String, pageNumber: Int) {
         api?.let { apiService: APIService ->
-
             val apiKey = resources.getString(R.string.api_key)
-            val searchParams = SearchParamsBuilder().addSearchTerm(text).addAPIKey(apiKey).toParams()
+            val searchParams = SearchParamsBuilder().addSearchTerm(text).addPageNumber(pageNumber)
+                    .addAPIKey(apiKey).toParams()
 
             apiService.searchTerm(searchParams).enqueue(object : Callback<PhotoSearchContainer> {
                 override fun onResponse(call: Call<PhotoSearchContainer>,
                                         response: Response<PhotoSearchContainer>) {
-                    handleQueryResponse(response)
+                    handleQueryResponse(response, pageNumber)
                 }
 
-                override fun onFailure(call: Call<PhotoSearchContainer>,
-                                       t: Throwable) {
+                override fun onFailure(call: Call<PhotoSearchContainer>, t: Throwable) {
                     photoSearchAdapter.resetPhotoItems()
                 }
             })
@@ -97,16 +107,18 @@ class MainActivity : InjectableBaseActivity(), InjectableBaseRecyclerViewHolder.
     /**
      * Updates adapter with photoItems.
      */
-    private fun handleQueryResponse(response: Response<PhotoSearchContainer>) {
+    private fun handleQueryResponse(response: Response<PhotoSearchContainer>, pageNumber: Int) {
         val container = response.body()
-        photoSearchAdapter.resetPhotoItems()
-        //TODO: Don't reset if paginating
+        if (pageNumber == 1) {
+            photoSearchAdapter.resetPhotoItems()
+        }
         if (response.isSuccessful && container != null && container.photos != null) {
             val mPhotoItems: ArrayList<PhotoItem> = container.photos.photoItems
             if (mPhotoItems.isEmpty()) {
                 Toast.makeText(this, getString(R.string.empty_search), Toast.LENGTH_SHORT).show()
             } else {
                 photoSearchAdapter.addPhotoItems(mPhotoItems)
+                mScrollListener.setPaginator(container.photos.paginator)
             }
         } else {
             Toast.makeText(this, getString(R.string.network_error), Toast.LENGTH_SHORT).show()
@@ -115,11 +127,12 @@ class MainActivity : InjectableBaseActivity(), InjectableBaseRecyclerViewHolder.
 
     // Search Item Click Listeners
     override fun onClick(position: Int) {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
-    override fun onLongClick(position: Int) {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    //Pagination Listener
+    override fun onLoadNextPage(nextPageNumber: Int) {
+        retrievePhotoItems(currentQuery, nextPageNumber)
     }
 
 

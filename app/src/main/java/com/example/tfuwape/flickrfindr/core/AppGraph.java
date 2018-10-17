@@ -1,8 +1,8 @@
 package com.example.tfuwape.flickrfindr.core;
 
 import com.example.tfuwape.flickrfindr.activities.InjectableBaseActivity;
-import com.example.tfuwape.flickrfindr.adapter.InjectableBaseAdapter;
-import com.example.tfuwape.flickrfindr.fragment.InjectableBaseFragment;
+import com.example.tfuwape.flickrfindr.adapters.InjectableBaseAdapter;
+import com.example.tfuwape.flickrfindr.fragments.InjectableBaseFragment;
 import com.example.tfuwape.flickrfindr.holder.InjectableBaseRecyclerViewHolder;
 
 /**

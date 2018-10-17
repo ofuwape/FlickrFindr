@@ -1,4 +1,4 @@
-package com.example.tfuwape.flickrfindr.adapter;
+package com.example.tfuwape.flickrfindr.adapters;
 
 /*
   Created by

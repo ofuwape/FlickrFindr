@@ -1,4 +1,4 @@
-package com.example.tfuwape.flickrfindr.fragment;
+package com.example.tfuwape.flickrfindr.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

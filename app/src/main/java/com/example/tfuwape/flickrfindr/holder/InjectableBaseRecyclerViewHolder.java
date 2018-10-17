@@ -13,7 +13,7 @@ import butterknife.ButterKnife;
  * Base view holder with common injecting/asset code
  */
 public abstract class InjectableBaseRecyclerViewHolder extends RecyclerView.ViewHolder
-        implements View.OnClickListener, View.OnLongClickListener {
+        implements View.OnClickListener {
 
     private final OnClickListener mListener;
     protected Context mContext;
@@ -29,10 +29,9 @@ public abstract class InjectableBaseRecyclerViewHolder extends RecyclerView.View
         super(itemView);
         view = itemView;
         mContext = context;
-
         mListener = clickListener;
+
         itemView.setOnClickListener(this);
-        itemView.setOnLongClickListener(this);
 
         ButterKnife.bind(this, itemView);
         MyApplication app = MyUtil.getApplication(mContext);
@@ -53,15 +52,6 @@ public abstract class InjectableBaseRecyclerViewHolder extends RecyclerView.View
         }
     }
 
-    @Override
-    public boolean onLongClick(View v) {
-        if (mListener != null) {
-            mListener.onLongClick(getLayoutPosition());
-        }
-
-        return true;
-    }
-
     public View getView() {
         return view;
     }
@@ -76,12 +66,5 @@ public abstract class InjectableBaseRecyclerViewHolder extends RecyclerView.View
          * @param position Position of view holder in recycler view
          */
         void onClick(int position);
-
-        /**
-         * Invoked on long clicks
-         *
-         * @param position Position of view holder in recycler view
-         */
-        void onLongClick(int position);
     }
 }
