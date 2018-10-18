@@ -37,4 +37,8 @@ public class SuggestionItemViewHolder extends InjectableBaseRecyclerViewHolder {
         void onClick(int position);
     }
 
+    public TextView getTextView() {
+        return textView;
+    }
+
 }

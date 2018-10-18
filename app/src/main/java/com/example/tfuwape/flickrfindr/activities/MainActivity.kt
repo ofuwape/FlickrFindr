@@ -174,7 +174,7 @@ class MainActivity : InjectableBaseActivity(),
     }
 
     // Search Item Click Listeners
-    fun onPhotoClick(position: Int) {
+    private fun onPhotoClick(position: Int) {
         val selectedItem: PhotoItem? = photoSearchAdapter.getPhotoItem(position)
         if (selectedItem != null) {
 
@@ -193,7 +193,7 @@ class MainActivity : InjectableBaseActivity(),
         }
     }
 
-    fun onSuggestionClick(position: Int) {
+    private fun onSuggestionClick(position: Int) {
         val searchTerm: String? = suggestionAdapter.getTerm(position)
         if (searchTerm != null) {
             searchView.setQuery(searchTerm, false)

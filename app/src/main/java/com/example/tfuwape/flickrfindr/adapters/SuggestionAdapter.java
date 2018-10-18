@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import com.example.tfuwape.flickrfindr.R;
 import com.example.tfuwape.flickrfindr.holder.InjectableBaseRecyclerViewHolder;
 import com.example.tfuwape.flickrfindr.holder.SuggestionItemViewHolder;
-import com.example.tfuwape.flickrfindr.models.PhotoItem;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,7 @@
 package com.example.tfuwape.flickrfindr.holder;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.TextView;
@@ -34,7 +35,10 @@ public class PhotoItemViewHolder extends InjectableBaseRecyclerViewHolder {
         imageDraweeView.setImageURI("");
         textView.setText("");
         //set views
-        imageDraweeView.setImageURI(MyUtil.getFrescoUri(photoItem.getSquareUrl()));
+        final Uri mUri = MyUtil.getFrescoUri(photoItem.getSquareUrl());
+        if (mUri != null) {
+            imageDraweeView.setImageURI(mUri);
+        }
         textView.setText(photoItem.getTitle());
     }
 
@@ -48,5 +52,9 @@ public class PhotoItemViewHolder extends InjectableBaseRecyclerViewHolder {
          * @param position Position of view holder in recycler view
          */
         void onClick(int position);
+    }
+
+    public TextView getTextView() {
+        return textView;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.tfuwape.flickrfindr.fragments;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -72,7 +73,10 @@ public class DetailDialogFragment extends DialogFragment {
         }
         if (photoItem != null) {
             draweeView.setImageURI("");
-            draweeView.setImageURI(MyUtil.getFrescoUri(photoItem.getLargeUrl()));
+            final Uri mUri = MyUtil.getFrescoUri(photoItem.getLargeUrl());
+            if (mUri != null) {
+                draweeView.setImageURI(mUri);
+            }
         }
 
         return view;
