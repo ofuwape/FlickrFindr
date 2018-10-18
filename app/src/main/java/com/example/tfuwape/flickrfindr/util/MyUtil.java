@@ -5,6 +5,8 @@ import android.net.Uri;
 
 import com.example.tfuwape.flickrfindr.R;
 import com.example.tfuwape.flickrfindr.core.MyApplication;
+import com.example.tfuwape.flickrfindr.listeners.FetchSearchTermsListener;
+import com.example.tfuwape.flickrfindr.listeners.FoundSearchTermListener;
 
 public abstract class MyUtil {
 

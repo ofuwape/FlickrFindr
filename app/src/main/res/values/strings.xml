@@ -5,4 +5,5 @@
     <string name="network_error">Oops, network error, please try again.</string>
     <string name="empty_search">Sorry, no photos. Search again.</string>
     <string name="close">Close Page</string>
+    <string name="sample">sample</string>
 </resources>

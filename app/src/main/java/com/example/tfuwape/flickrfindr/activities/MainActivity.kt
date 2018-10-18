@@ -6,24 +6,38 @@ import android.support.v7.app.ActionBar
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
+import android.view.View
 import android.widget.Toast
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.example.tfuwape.flickrfindr.R
 import com.example.tfuwape.flickrfindr.adapters.PhotoSearchAdapter
+import com.example.tfuwape.flickrfindr.adapters.SuggestionAdapter
 import com.example.tfuwape.flickrfindr.builders.SearchParamsBuilder
 import com.example.tfuwape.flickrfindr.core.APIService
 import com.example.tfuwape.flickrfindr.fragments.DetailDialogFragment
-import com.example.tfuwape.flickrfindr.holder.InjectableBaseRecyclerViewHolder
+import com.example.tfuwape.flickrfindr.holder.PhotoItemViewHolder
+import com.example.tfuwape.flickrfindr.holder.SuggestionItemViewHolder
+import com.example.tfuwape.flickrfindr.listeners.FetchSearchTermsListener
+import com.example.tfuwape.flickrfindr.listeners.FoundSearchTermListener
 import com.example.tfuwape.flickrfindr.listeners.PagingScrollListener
 import com.example.tfuwape.flickrfindr.models.PhotoItem
 import com.example.tfuwape.flickrfindr.models.containers.PhotoSearchContainer
+import com.example.tfuwape.flickrfindr.util.CheckSearchTermTask
+import com.example.tfuwape.flickrfindr.util.FetchSearchTermsTask
 import com.example.tfuwape.flickrfindr.util.LineItemDecoration
+import com.example.tfuwape.flickrfindr.util.SaveSearchTermTask
+import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.concurrent.TimeUnit
 
-class MainActivity : InjectableBaseActivity(), InjectableBaseRecyclerViewHolder.OnClickListener, PagingScrollListener.OnPageStateListener {
+class MainActivity : InjectableBaseActivity(),
+        PagingScrollListener.OnPageStateListener,
+        FetchSearchTermsListener, FoundSearchTermListener {
 
     @BindView(R.id.searchView)
     lateinit var searchView: SearchView
@@ -31,20 +45,35 @@ class MainActivity : InjectableBaseActivity(), InjectableBaseRecyclerViewHolder.
     @BindView(R.id.searchRecyclerView)
     lateinit var searchRecyclerView: RecyclerView
 
-    private lateinit var photoSearchAdapter: PhotoSearchAdapter
-    private var mScrollListener: PagingScrollListener = PagingScrollListener()
+    @BindView(R.id.suggestionRecyclerView)
+    lateinit var suggestionRecyclerView: RecyclerView
 
+    private lateinit var photoSearchAdapter: PhotoSearchAdapter
+    private lateinit var suggestionAdapter: SuggestionAdapter
+    private var mScrollListener: PagingScrollListener = PagingScrollListener()
     private var currentQuery: String = ""
+    private var disposableListener: CompositeDisposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
         ButterKnife.bind(this)
-        photoSearchAdapter = PhotoSearchAdapter(this, this)
+        photoSearchAdapter = PhotoSearchAdapter(this,
+                PhotoItemViewHolder.PhotoItemClickListener { position: Int ->
+                    onPhotoClick(position)
+                })
+        suggestionAdapter = SuggestionAdapter(this,
+                SuggestionItemViewHolder.SuggestionClickListener { position: Int ->
+                    onSuggestionClick(position)
+                })
         configureViews()
     }
 
+    /**
+     * Configure user interface for activity
+     */
     private fun configureViews() {
+        //SearchView
         searchRecyclerView.layoutManager = LinearLayoutManager(this)
         searchRecyclerView.addItemDecoration(LineItemDecoration(ContextCompat.getDrawable(this, android.R.color.darker_gray)))
         searchRecyclerView.adapter = photoSearchAdapter
@@ -53,32 +82,50 @@ class MainActivity : InjectableBaseActivity(), InjectableBaseRecyclerViewHolder.
         mScrollListener.setOnChangeStateListener(this)
         searchRecyclerView.addOnScrollListener(mScrollListener)
 
+        //Action Bar
         supportActionBar?.let { mSupportActionBar: ActionBar ->
             val actionBarTitle: String = mSupportActionBar.title.toString() + " - explore for photos..."
             mSupportActionBar.title = actionBarTitle
         }
 
+        //Suggestion
+        val linearLayoutManager = LinearLayoutManager(this)
+        linearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
+        suggestionRecyclerView.layoutManager = linearLayoutManager
+        suggestionRecyclerView.adapter = suggestionAdapter
     }
 
+    /**
+     * Listen to search query text changes
+     */
     private fun addSearchViewListener() {
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextChange(newText: String): Boolean {
-                val cleanQuery = newText.trim()
-                if (!cleanQuery.isEmpty()) {
-                    currentQuery = cleanQuery
-                    retrievePhotoItems(cleanQuery, 1)
-                } else {
-                    photoSearchAdapter.resetPhotoItems()
-                }
-                return true
-            }
+        disposableListener = CompositeDisposable()
+        disposableListener?.add(
+                RxSearchView.queryTextChanges(searchView)
+                        .debounce(300, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe { charSequence: CharSequence ->
+                            val query = charSequence.toString()
+                            handleQuery(query)
+                            saveTermToDB(query)
+                        })
+    }
 
-            override fun onQueryTextSubmit(query: String): Boolean {
-                //do nothing
-                return true
-            }
-        })
-        //TODO: open full screen dialog with image.
+    private fun saveTermToDB(searchTerm: String) {
+        CheckSearchTermTask(searchTerm.toLowerCase(), this).execute()
+    }
+
+    private fun handleQuery(query: String) {
+        val cleanQuery = query.trim()
+        if (!cleanQuery.isEmpty()) {
+            currentQuery = cleanQuery
+            retrievePhotoItems(cleanQuery, 1)
+            suggestionAdapter.resetTerms()
+            suggestionRecyclerView.visibility = View.GONE
+        } else {
+            FetchSearchTermsTask(this).execute()
+            photoSearchAdapter.resetPhotoItems()
+        }
     }
 
 
@@ -127,7 +174,7 @@ class MainActivity : InjectableBaseActivity(), InjectableBaseRecyclerViewHolder.
     }
 
     // Search Item Click Listeners
-    override fun onClick(position: Int) {
+    fun onPhotoClick(position: Int) {
         val selectedItem: PhotoItem? = photoSearchAdapter.getPhotoItem(position)
         if (selectedItem != null) {
 
@@ -146,9 +193,35 @@ class MainActivity : InjectableBaseActivity(), InjectableBaseRecyclerViewHolder.
         }
     }
 
+    fun onSuggestionClick(position: Int) {
+        val searchTerm: String? = suggestionAdapter.getTerm(position)
+        if (searchTerm != null) {
+            searchView.setQuery(searchTerm, false)
+        }
+    }
+
     //Pagination Listener
     override fun onLoadNextPage(nextPageNumber: Int) {
         retrievePhotoItems(currentQuery, nextPageNumber)
+    }
+
+    // FetchSearchTermsListener
+    override fun foundTerms(terms: List<String>) {
+        suggestionAdapter.setTerms(terms)
+        suggestionRecyclerView.visibility = if (terms.isEmpty())
+            View.GONE else View.VISIBLE
+    }
+
+    // Found Previous SearchTerm Listener
+    override fun didFindTerm(result: Boolean, query: String) {
+        if (!result && !query.isEmpty()) {
+            SaveSearchTermTask(query).execute()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposableListener?.dispose()
     }
 
 

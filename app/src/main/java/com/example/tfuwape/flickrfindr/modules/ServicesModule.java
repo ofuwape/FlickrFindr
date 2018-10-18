@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.example.tfuwape.flickrfindr.BuildConfig;
 import com.example.tfuwape.flickrfindr.core.APIService;
+import com.example.tfuwape.flickrfindr.core.Component;
 import com.example.tfuwape.flickrfindr.core.MyApplication;
 import com.example.tfuwape.flickrfindr.util.MyUtil;
 
@@ -77,9 +78,9 @@ public final class ServicesModule extends MockableModule {
 
         // Used for configuring mocked url endpoint
         if (BuildConfig.DEBUG && mockMode) {
-            MyApplication app = MyUtil.getApplication(mContext);
-            if (app != null && !app.getMockBaseUrl().isEmpty()) {
-                baseUrl = app.getMockBaseUrl();
+            String mockBaseUrl = MyApplication.getMockBaseUrl();
+            if (mockBaseUrl != null) {
+                baseUrl = mockBaseUrl;
             }
         }
 

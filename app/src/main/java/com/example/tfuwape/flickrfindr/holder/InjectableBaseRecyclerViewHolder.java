@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.example.tfuwape.flickrfindr.core.Component;
 import com.example.tfuwape.flickrfindr.core.MyApplication;
 import com.example.tfuwape.flickrfindr.util.MyUtil;
 
@@ -34,9 +35,9 @@ public abstract class InjectableBaseRecyclerViewHolder extends RecyclerView.View
         itemView.setOnClickListener(this);
 
         ButterKnife.bind(this, itemView);
-        MyApplication app = MyUtil.getApplication(mContext);
-        if (app != null) {
-            app.graph().inject(this);
+        Component graph = MyApplication.graph();
+        if (graph != null) {
+            graph.inject(this);
         }
 
     }
@@ -57,11 +58,11 @@ public abstract class InjectableBaseRecyclerViewHolder extends RecyclerView.View
     }
 
     /**
-     * Click listener for handling clicks on the video card
+     * Click listener for handling clicks on the item
      */
     public interface OnClickListener {
         /**
-         * Invoked when the user taps on the video card
+         * Invoked when the user taps on the item
          *
          * @param position Position of view holder in recycler view
          */

@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
 import com.example.tfuwape.flickrfindr.core.APIService;
+import com.example.tfuwape.flickrfindr.core.Component;
 import com.example.tfuwape.flickrfindr.core.MyApplication;
-import com.example.tfuwape.flickrfindr.util.MyUtil;
 import com.example.tfuwape.flickrfindr.util.TypefaceManager;
 
 import javax.inject.Inject;
@@ -28,9 +28,9 @@ public class InjectableBaseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MyApplication application = MyUtil.getApplication(getActivity());
-        if (application != null) {
-            application.graph().inject(this);
+        Component graph = MyApplication.graph();
+        if (graph != null) {
+            graph.inject(this);
         }
     }
 

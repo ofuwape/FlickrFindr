@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.example.tfuwape.flickrfindr.core.APIService;
+import com.example.tfuwape.flickrfindr.core.Component;
 import com.example.tfuwape.flickrfindr.core.MyApplication;
 import com.example.tfuwape.flickrfindr.util.MyUtil;
 import com.example.tfuwape.flickrfindr.util.TypefaceManager;
@@ -32,9 +33,9 @@ public abstract class InjectableBaseActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MyApplication application = MyUtil.getApplication(this);
-        if (application != null) {
-            application.graph().inject(this);
+        Component graph = MyApplication.graph();
+        if (graph != null) {
+            graph.inject(this);
         }
     }
 

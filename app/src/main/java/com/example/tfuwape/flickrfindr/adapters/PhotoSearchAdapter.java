@@ -23,16 +23,16 @@ public class PhotoSearchAdapter extends InjectableBaseAdapter {
     private ArrayList<PhotoItem> mPhotoItems = new ArrayList<>();
     private Context mContext;
     private LayoutInflater mLayoutInflater;
-    private InjectableBaseRecyclerViewHolder.OnClickListener mClickListener;
+    private PhotoItemViewHolder.PhotoItemClickListener mClickListener;
 
-    public PhotoSearchAdapter(Context context, InjectableBaseRecyclerViewHolder.OnClickListener clickListener) {
-        super(context);
+    public PhotoSearchAdapter(Context context, PhotoItemViewHolder.PhotoItemClickListener clickListener) {
+        super();
         this.mContext = context;
         this.mLayoutInflater = LayoutInflater.from(context);
         this.mClickListener = clickListener;
     }
 
-    public PhotoSearchAdapter(Context context, InjectableBaseRecyclerViewHolder.OnClickListener clickListener, ArrayList<PhotoItem> photoItems) {
+    public PhotoSearchAdapter(Context context, PhotoItemViewHolder.PhotoItemClickListener clickListener, ArrayList<PhotoItem> photoItems) {
         this(context, clickListener);
         this.mPhotoItems = photoItems;
         notifyDataSetChanged();

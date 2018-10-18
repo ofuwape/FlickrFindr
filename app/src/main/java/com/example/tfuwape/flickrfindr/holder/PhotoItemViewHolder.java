@@ -25,7 +25,7 @@ public class PhotoItemViewHolder extends InjectableBaseRecyclerViewHolder {
         super(context, itemView);
     }
 
-    public PhotoItemViewHolder(Context context, View itemView, OnClickListener clickListener) {
+    public PhotoItemViewHolder(Context context, View itemView, PhotoItemClickListener clickListener) {
         super(context, itemView, clickListener);
     }
 
@@ -36,5 +36,17 @@ public class PhotoItemViewHolder extends InjectableBaseRecyclerViewHolder {
         //set views
         imageDraweeView.setImageURI(MyUtil.getFrescoUri(photoItem.getSquareUrl()));
         textView.setText(photoItem.getTitle());
+    }
+
+    /**
+     * Click listener for handling clicks on the item
+     */
+    public interface PhotoItemClickListener extends OnClickListener {
+        /**
+         * Invoked when the user taps on the item
+         *
+         * @param position Position of view holder in recycler view
+         */
+        void onClick(int position);
     }
 }
