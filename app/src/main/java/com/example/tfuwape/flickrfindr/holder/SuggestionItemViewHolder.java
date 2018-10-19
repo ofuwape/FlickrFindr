@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.tfuwape.flickrfindr.R;
+import com.example.tfuwape.flickrfindr.util.TypefaceType;
 
 import butterknife.BindView;
 
@@ -39,6 +40,11 @@ public class SuggestionItemViewHolder extends InjectableBaseRecyclerViewHolder {
 
     public TextView getTextView() {
         return textView;
+    }
+
+    @Override
+    protected void applyTypefaces() {
+        setTypefaceForTextView(TypefaceType.ROBOTO_REGULAR, textView);
     }
 
 }

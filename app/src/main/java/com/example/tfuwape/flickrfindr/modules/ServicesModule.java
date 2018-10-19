@@ -30,7 +30,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public final class ServicesModule extends MockableModule {
 
     private Context mContext;
-    private boolean provideMocks;
 
     /**
      * Creates new instance of ServicesModule.
@@ -41,7 +40,6 @@ public final class ServicesModule extends MockableModule {
     public ServicesModule(boolean provideMocks, Context context) {
         super(provideMocks);
         this.mContext = context;
-        this.provideMocks = provideMocks;
     }
 
     /**

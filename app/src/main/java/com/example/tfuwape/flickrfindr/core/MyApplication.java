@@ -1,10 +1,8 @@
 package com.example.tfuwape.flickrfindr.core;
 
 import android.app.Application;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.persistence.room.Room;
-import android.content.Context;
 import android.support.annotation.VisibleForTesting;
 
 import com.example.tfuwape.flickrfindr.roomdb.AppDatabase;
@@ -12,8 +10,6 @@ import com.example.tfuwape.flickrfindr.roomdb.SearchTermDao;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
 import javax.inject.Singleton;
-
-import dagger.Provides;
 
 public class MyApplication extends Application {
 
@@ -25,6 +21,7 @@ public class MyApplication extends Application {
     private static SearchTermDao searchTermDao;
     private static AppDatabase appDatabase;
     private final MutableLiveData<Boolean> mIsDatabaseCreated = new MutableLiveData<>();
+    private boolean mockMode;
 
 
     @Override
@@ -47,7 +44,11 @@ public class MyApplication extends Application {
 
     @Singleton
     void seUpDB() {
-        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, DATABASE_NAME).build();
+        if (mockMode) {
+            appDatabase = Room.inMemoryDatabaseBuilder(getApplicationContext(), AppDatabase.class).build();
+        } else {
+            appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, DATABASE_NAME).build();
+        }
         if (getDatabasePath(DATABASE_NAME).exists()) {
             mIsDatabaseCreated.postValue(true);
         }
@@ -57,8 +58,9 @@ public class MyApplication extends Application {
         return mComponent;
     }
 
-    public void setMockMode(boolean useMock) {
+    public void setAPIMockMode(boolean useMock) {
         mComponent = Component.Initializer.init(useMock, this);
+        mockMode = useMock;
     }
 
     //Testing Helpers

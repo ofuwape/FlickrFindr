@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.example.tfuwape.flickrfindr.R;
 import com.example.tfuwape.flickrfindr.models.PhotoItem;
 import com.example.tfuwape.flickrfindr.util.MyUtil;
+import com.example.tfuwape.flickrfindr.util.TypefaceType;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import butterknife.BindView;
@@ -21,10 +22,6 @@ public class PhotoItemViewHolder extends InjectableBaseRecyclerViewHolder {
     @BindView(R.id.titleTextView)
     TextView textView;
 
-
-    public PhotoItemViewHolder(Context context, View itemView) {
-        super(context, itemView);
-    }
 
     public PhotoItemViewHolder(Context context, View itemView, PhotoItemClickListener clickListener) {
         super(context, itemView, clickListener);
@@ -57,4 +54,10 @@ public class PhotoItemViewHolder extends InjectableBaseRecyclerViewHolder {
     public TextView getTextView() {
         return textView;
     }
+
+    @Override
+    protected void applyTypefaces() {
+        setTypefaceForTextView(TypefaceType.ROBOTO_MEDIUM, textView);
+    }
+
 }

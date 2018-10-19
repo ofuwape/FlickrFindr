@@ -12,9 +12,9 @@ public class PaginatorTest {
 
     @Test
     public void testConstructor() {
-        int totalPages = 20;
-        int currentPage = 5;
-        int limit = 25;
+        final int totalPages = 20;
+        final int currentPage = 5;
+        final int limit = 25;
         Paginator paginator = new Paginator(totalPages, currentPage, limit);
         assertEquals(paginator.getTotalPages(), totalPages);
         assertEquals(paginator.getCurrentPage(), currentPage);

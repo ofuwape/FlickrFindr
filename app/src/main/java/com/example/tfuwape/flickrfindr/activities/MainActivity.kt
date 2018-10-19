@@ -1,5 +1,7 @@
 package com.example.tfuwape.flickrfindr.activities
 
+import android.content.Context
+import android.content.ContextWrapper
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.ActionBar
@@ -23,10 +25,7 @@ import com.example.tfuwape.flickrfindr.listeners.FoundSearchTermListener
 import com.example.tfuwape.flickrfindr.listeners.PagingScrollListener
 import com.example.tfuwape.flickrfindr.models.PhotoItem
 import com.example.tfuwape.flickrfindr.models.containers.PhotoSearchContainer
-import com.example.tfuwape.flickrfindr.util.CheckSearchTermTask
-import com.example.tfuwape.flickrfindr.util.FetchSearchTermsTask
-import com.example.tfuwape.flickrfindr.util.LineItemDecoration
-import com.example.tfuwape.flickrfindr.util.SaveSearchTermTask
+import com.example.tfuwape.flickrfindr.util.*
 import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -48,8 +47,8 @@ class MainActivity : InjectableBaseActivity(),
     @BindView(R.id.suggestionRecyclerView)
     lateinit var suggestionRecyclerView: RecyclerView
 
-    private lateinit var photoSearchAdapter: PhotoSearchAdapter
-    private lateinit var suggestionAdapter: SuggestionAdapter
+    lateinit var photoSearchAdapter: PhotoSearchAdapter
+    lateinit var suggestionAdapter: SuggestionAdapter
     private var mScrollListener: PagingScrollListener = PagingScrollListener()
     private var currentQuery: String = ""
     private var disposableListener: CompositeDisposable? = null
@@ -134,6 +133,7 @@ class MainActivity : InjectableBaseActivity(),
      * Fires api search for photos based on query.
      */
     private fun retrievePhotoItems(text: String, pageNumber: Int) {
+        val context: Context = this
         api?.let { apiService: APIService ->
             val apiKey = resources.getString(R.string.api_key)
             val searchParams = SearchParamsBuilder().addSearchTerm(text).addPageNumber(pageNumber)
@@ -147,6 +147,7 @@ class MainActivity : InjectableBaseActivity(),
 
                 override fun onFailure(call: Call<PhotoSearchContainer>, t: Throwable) {
                     photoSearchAdapter.resetPhotoItems()
+                    Toast.makeText(context, getString(R.string.network_error), Toast.LENGTH_SHORT).show()
                 }
             })
         }

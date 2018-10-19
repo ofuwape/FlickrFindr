@@ -9,7 +9,10 @@ import java.util.Map;
 public class SearchParamsBuilder {
 
     private Map<String, String> mParams = new HashMap<>();
-    private final static int PAGE_LIMIT = 25;
+    final static String PAGE_LIMIT = "25";
+    final static String FORMAT = "json";
+    final static String JSON_CALLBACK = "1";
+    final static String IMAGE_TYPES = "url_sq,url_l";
 
     public SearchParamsBuilder addSearchTerm(String term) {
         if (term != null) {
@@ -31,18 +34,16 @@ public class SearchParamsBuilder {
     }
 
     private void addPageLimit() {
-        if (SearchParamsBuilder.PAGE_LIMIT > 0) {
-            mParams.put("per_page", String.valueOf(SearchParamsBuilder.PAGE_LIMIT));
-        }
+        mParams.put("per_page", SearchParamsBuilder.PAGE_LIMIT);
     }
 
     private void enableImageTypes() {
-        mParams.put("extras", "url_sq,url_l");
+        mParams.put("extras", IMAGE_TYPES);
     }
 
     private void enableJSONFormat() {
-        mParams.put("format", "json");
-        mParams.put("nojsoncallback", "1");
+        mParams.put("format", FORMAT);
+        mParams.put("nojsoncallback", JSON_CALLBACK);
     }
 
     public Map<String, String> toParams() {
