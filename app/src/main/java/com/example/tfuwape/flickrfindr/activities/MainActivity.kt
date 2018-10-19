@@ -111,7 +111,9 @@ class MainActivity : InjectableBaseActivity(),
     }
 
     private fun saveTermToDB(searchTerm: String) {
-        CheckSearchTermTask(searchTerm.toLowerCase(), this).execute()
+        if (!searchTerm.isEmpty()) {
+            CheckSearchTermTask(searchTerm.toLowerCase(), this).execute()
+        }
     }
 
     private fun handleQuery(query: String) {

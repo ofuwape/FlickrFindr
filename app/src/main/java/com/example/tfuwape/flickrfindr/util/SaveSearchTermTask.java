@@ -18,7 +18,7 @@ public class SaveSearchTermTask extends AsyncTask {
     @Override
     protected Object doInBackground(Object[] objects) {
         SearchTermDao searchTermDao = MyApplication.getSearchTermDao();
-        if (searchTermDao != null) {
+        if (searchTermDao != null && !query.isEmpty()) {
             final SearchTerm searchTerm = new SearchTerm();
             searchTerm.setText(query);
             searchTermDao.insert(searchTerm);

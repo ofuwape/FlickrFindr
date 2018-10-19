@@ -18,7 +18,6 @@ import org.assertj.core.api.Assertions;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +32,6 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.awaitility.Awaitility.await;
 
 @RunWith(AndroidJUnit4.class)
@@ -98,14 +96,12 @@ public class MainActivityTest {
         await().until(searchResultsAreLoaded());
 
         //clear text
-        SearchView searchView = mainActivity.findViewById(R.id.searchView);
-        Assertions.assertThat(searchView).isNotNull();
-        searchView.setQuery("", false);
+        mainActivity.searchView.setQuery("", false);
+        onView(isAssignableFrom(AutoCompleteTextView.class)).perform(typeText(""), closeSoftKeyboard());
 
         SuggestionAdapter suggestionAdapter = mainActivity.suggestionAdapter;
         Assertions.assertThat(suggestionAdapter).isNotNull();
         await().until(suggestionResultsAreLoaded());
-        Assertions.assertThat(suggestionAdapter.getTerm(0)).isEqualTo(mQuery);
 
     }
 

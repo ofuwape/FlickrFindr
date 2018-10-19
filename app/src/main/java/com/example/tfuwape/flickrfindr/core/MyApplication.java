@@ -9,17 +9,16 @@ import com.example.tfuwape.flickrfindr.roomdb.AppDatabase;
 import com.example.tfuwape.flickrfindr.roomdb.SearchTermDao;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
-import javax.inject.Singleton;
-
 public class MyApplication extends Application {
 
-    @VisibleForTesting
     private static final String DATABASE_NAME = "flickr-findr-db";
+
+    @VisibleForTesting
+    private static final String TEST_DATABASE_NAME = "test-flickr-findr-db";
 
     private static Component mComponent;
     private static String mockBaseUrl = "";
     private static SearchTermDao searchTermDao;
-    private static AppDatabase appDatabase;
     private final MutableLiveData<Boolean> mIsDatabaseCreated = new MutableLiveData<>();
     private boolean mockMode;
 
@@ -38,20 +37,20 @@ public class MyApplication extends Application {
         mComponent = Component.Initializer.init(false, this);
         mComponent.inject(this);
         Fresco.initialize(this);
-        seUpDB();
-        searchTermDao = appDatabase.searchTermDao();
+        configureDB();
     }
 
-    @Singleton
-    void seUpDB() {
+    private void configureDB() {
+        AppDatabase appDatabase;
         if (mockMode) {
-            appDatabase = Room.inMemoryDatabaseBuilder(getApplicationContext(), AppDatabase.class).build();
+            appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, TEST_DATABASE_NAME).build();
         } else {
             appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, DATABASE_NAME).build();
         }
         if (getDatabasePath(DATABASE_NAME).exists()) {
             mIsDatabaseCreated.postValue(true);
         }
+        searchTermDao = appDatabase.searchTermDao();
     }
 
     public static Component graph() {
@@ -61,6 +60,7 @@ public class MyApplication extends Application {
     public void setAPIMockMode(boolean useMock) {
         mComponent = Component.Initializer.init(useMock, this);
         mockMode = useMock;
+        configureDB();
     }
 
     //Testing Helpers

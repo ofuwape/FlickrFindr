@@ -10,26 +10,22 @@ public class PhotoSearchData {
 
     //current page
     @SerializedName("page")
-    private int page;
+    int page;
 
     //total number of pages
     @SerializedName("pages")
-    private int pages;
+    int pages;
 
     @SerializedName("perpage")
-    private int perPage;
+    int perPage;
 
     @SerializedName("photo")
-    private ArrayList<PhotoItem> photoItems;
+    ArrayList<PhotoItem> photoItems;
 
     private Paginator paginator;
 
 
     PhotoSearchData() {
-    }
-
-    PhotoSearchData(ArrayList<PhotoItem> mPhotoItems) {
-        this.photoItems = mPhotoItems;
     }
 
     public Paginator getPaginator() {
@@ -42,9 +38,5 @@ public class PhotoSearchData {
 
     public ArrayList<PhotoItem> getPhotoItems() {
         return photoItems;
-    }
-
-    public void setPhotoItems(ArrayList<PhotoItem> photoItems) {
-        this.photoItems = photoItems;
     }
 }
